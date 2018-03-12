@@ -38,13 +38,3 @@ document.querySelector(".top").addEventListener("click", (evt) => {
   pgIndex = 0;
   scrollToHeightIndex(windowHeight, pgIndex, currentTransition);
 })
-
-const textarea = document.querySelector("textarea")
-const h1 = document.querySelectorAll("h1")
-textarea.addEventListener("keyup", () => {
-  if(textarea.value) {
-    h1.forEach(text => text.style.display = "none")
-  } else {
-    h1.forEach(text => text.style.display = "inline-block")
-  }
-})
