@@ -45,7 +45,7 @@ body {
   cursor: pointer;
   color: black;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 3.25rem;
+  font-size: 2.25rem;
   letter-spacing: 1px;
 }
 
@@ -57,14 +57,19 @@ body {
 }
 
 .main_text_container h1{
-  flex: 1;
+  flex: 0 1 auto;
   margin: auto;
   font-family: "rhody";
-  font-size: 68vh;
-  letter-spacing: -0.65rem;
+  font-size: 30rem;
+  letter-spacing: -0.25rem;
   font-feature-settings: "ss04";
 }
 
 .top {
   cursor: pointer;
+  text-decoration: underline;
+}
+
+.top:hover {
+  text-decoration: none;
 }
