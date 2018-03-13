@@ -54,13 +54,15 @@ body {
 
 .main_text_container h1{
   position: absolute;
+  display: inline-block;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 0;
   font-family: "rhody";
-  font-size: 30rem;
-  letter-spacing: -0.35rem;
+  font-size: 25rem;
+  letter-spacing: -0.25rem;
+  line-height: 70%;
   font-feature-settings: "ss04";
   transition: opacity 200ms ease-in-out;
   user-select: none;
