@@ -1,8 +1,14 @@
-@font-face{
+@font-face {
   font-family: "rhody";
   src: url("./_fonts/Rhododendron-Bold.eot");
   src: url("./_fonts/Rhododendron-Bold.woff2") format("woff2"),
        url("./_fonts/Rhododendron-Bold.woff") format("woff");
+}
+
+@font-face {
+  font-family: "authentic";
+  src: url("./_fonts/AUTHENTIC-Sans.woff2") format("woff2"),
+       url("./_fonts/AUTHENTIC-Sans.woff") format("woff");
 }
 
 * {
@@ -84,7 +90,7 @@ body {
 #textInput,
 .arrow_container p {
   color: black;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "authentic", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 2rem;
 }
 
