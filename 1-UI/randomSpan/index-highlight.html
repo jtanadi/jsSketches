@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SWITCHEROO</title>
+  
+  <style>
+    @font-face {
+      font-family: "Liberation Sans";
+      src: url("./_fonts/LiberationSans-Regular-webfont.woff") format("woff");
+    }
+
+    * {
+      margin: .5em;
+    }
+
+    select, button {
+      font-size: 2em;
+      width: 10em;
+      background-color: white;
+      border: 1px solid black;
+      outline: none;
+    }
+
+    button {
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: black;
+      color: white;
+    }
+
+    p {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 3em;
+      line-height: 130%;
+    }
+
+    span{
+      margin: 0;
+    }
+
+    .libSans { 
+      font-family: "Liberation Sans";
+      color: blue;
+    }
+
+  </style>
+
+</head>
+<body>
+  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ut odio convallis, aliquam diam eget, dignissim augue. Aliquam pretium sollicitudin dui tincidunt fringilla. Cras lobortis, mauris nec pretium sagittis, nulla purus vulputate sem, in placerat tellus lorem sit amet nibh. Sed condimentum feugiat leo, at tincidunt ligula viverra id. Maecenas suscipit nisl eu interdum feugiat. Pellentesque aliquam laoreet velit eget mattis. Etiam vestibulum tempor purus, sagittis iaculis odio. Etiam ac quam placerat ipsum malesuada commodo interdum eget libero. Nunc at urna ut ligula blandit luctus. Maecenas at odio nunc. Aenean vel lacinia turpis, ac rhoncus libero. Fusce eget bibendum nulla, in efficitur ex. Phasellus egestas quam sed tellus dictum, quis aliquet nisi interdum. Maecenas tincidunt sollicitudin efficitur. Curabitur ac justo ante.</p>
+
+  <script>
+    const pElement = document.querySelector("p");
+
+    const addSpan = (letter) => {
+      return `<span>${letter}</span>`;
+    }
+
+    const changeFont = (elmt) => {
+      elmt.classList.toggle("libSans")
+    }
+
+    pElement.innerHTML = pElement.innerText
+      .split("")
+      .map(letter => addSpan(letter))
+      .join("")
+
+    const spanElmt = document.querySelectorAll("span")
+    spanElmt.forEach(span => span.addEventListener("mouseover", (event) => {
+      changeFont(event.target)  
+    }))
+    
+
+  </script>
+</body>
+</html>
