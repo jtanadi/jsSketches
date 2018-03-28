@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SWITCHEROO</title>
+  
+  <style>
+    * {
+      margin: .5em;
+    }
+
+    select {
+      font-size: 2em;
+      width: 10em;
+    }
+
+    p {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 3em;
+    }
+
+    span{
+      margin: 0;
+    }
+  </style>
+
+</head>
+<body>
+  <select id="font1">
+    <option value="Arial">Arial</option>
+    <option value="Georgia">Georgia</option>
+    <option value="Times New Roman">Times New Roman</option>
+    <option value="Courier">Courier</option>
+  </select>
+  
+  <select id="font2">
+    <option value="Arial">Arial</option>
+    <option value="Georgia">Georgia</option>
+    <option value="Times New Roman">Times New Roman</option>
+    <option value="Courier">Courier</option>
+  </select>
+
+  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ut odio convallis, aliquam diam eget, dignissim augue. Aliquam pretium sollicitudin dui tincidunt fringilla. Cras lobortis, mauris nec pretium sagittis, nulla purus vulputate sem, in placerat tellus lorem sit amet nibh. Sed condimentum feugiat leo, at tincidunt ligula viverra id. Maecenas suscipit nisl eu interdum feugiat. Pellentesque aliquam laoreet velit eget mattis. Etiam vestibulum tempor purus, sagittis iaculis odio. Etiam ac quam placerat ipsum malesuada commodo interdum eget libero. Nunc at urna ut ligula blandit luctus. Maecenas at odio nunc. Aenean vel lacinia turpis, ac rhoncus libero. Fusce eget bibendum nulla, in efficitur ex. Phasellus egestas quam sed tellus dictum, quis aliquet nisi interdum. Maecenas tincidunt sollicitudin efficitur. Curabitur ac justo ante.</p>
+
+  <script>
+    const paragraph = document.querySelector("p");
+    const font1Input = document.getElementById("font1");
+    const font2Input = document.getElementById("font2");
+
+    const randomSpan = (letter, font1, font2) => {
+      if(!Math.round(Math.random())) {
+        return `<span style="font-family: ${font1}">${letter}</span>`;
+      }
+      return `<span style="font-family: ${font2}">${letter}</span>`;
+    }
+    
+    const refresh = (font1, font2) => {
+      paragraph.innerHTML = paragraph.innerText.split("")
+        .map(letter => randomSpan(letter, font1, font2))
+        .join("")
+    }
+
+    font1Input.addEventListener("change", (event) => {
+      refresh(event.target.value, font2Input.value)
+    })
+    
+    font2Input.addEventListener("change", (event) => {
+      refresh(font1.value, event.target.value)
+    })
+  </script>
+</body>
+</html>
