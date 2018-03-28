@@ -5,6 +5,11 @@
   <title>SWITCHEROO</title>
   
   <style>
+    @font-face {
+      font-family: "Liberation Sans";
+      src: url("./_fonts/LiberationSans-Regular-webfont.woff") format("woff");
+    }
+
     * {
       margin: .5em;
     }
@@ -34,7 +39,7 @@
   </select>
   
   <select id="font2">
-    <option value="Arial">Arial</option>
+    <option value="Liberation Sans">Liberation Sans</option>
     <option value="Georgia">Georgia</option>
     <option value="Times New Roman">Times New Roman</option>
     <option value="Courier">Courier</option>
@@ -46,6 +51,7 @@
     const paragraph = document.querySelector("p");
     const font1Input = document.getElementById("font1");
     const font2Input = document.getElementById("font2");
+    const dropDowns = document.querySelectorAll("select");
 
     const randomSpan = (letter, font1, font2) => {
       if(!Math.round(Math.random())) {
@@ -60,13 +66,15 @@
         .join("")
     }
 
-    font1Input.addEventListener("change", (event) => {
-      refresh(event.target.value, font2Input.value)
+    refresh(font1Input.value, font2Input.value);
+
+    dropDowns.forEach(dropDown => {
+      dropDown.addEventListener("change", () => {
+        refresh(font1Input.value, font2Input.value)
+      })
     })
-    
-    font2Input.addEventListener("change", (event) => {
-      refresh(font1.value, event.target.value)
-    })
+
+
   </script>
 </body>
 </html>
