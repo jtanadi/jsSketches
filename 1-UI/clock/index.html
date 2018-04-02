@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Clock</title>
+
+  <style>
+    * {
+      margin: 0;
+    }
+
+    p {
+      font-size: 10em;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+  
+  </style>
+</head>
+<body>
+  <p id="clock">
+    HH : MM : SS
+  </p>
+
+
+  <script>
+    const clock = document.getElementById("clock");
+    let amPM;
+    
+    const zFill = num => {
+      return (num < 10) ? `0${num}` : num
+    }
+
+    const convertHour = num => {
+      if(num == 0) {
+        amPM = "AM";
+        return 12;
+      } else if (num > 0 && num < 12) {
+        amPM = "AM";
+        return num;
+      } else if (num == 12) {
+        amPM = "PM"
+        return num
+      } else if (num > 12) {
+        amPM = "PM"
+        return num - 12
+      }
+    }
+
+    const updateClock = () => {
+      const timeNow = Date.now();
+      const time = new Date(timeNow);
+
+      const hour = zFill(convertHour(time.getHours()));
+      const minute = zFill(time.getMinutes());
+      const seconds = zFill(time.getSeconds());
+
+      clock.innerHTML = `${hour} : ${minute} : ${seconds} ${amPM}`
+    }
+    updateClock();
+    window.setInterval(updateClock, 1000);
+    
+  
+  </script>
+
+</body>
+</html>
