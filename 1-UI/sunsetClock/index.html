@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Clock</title>
+
+  <style>
+    * {
+      margin: 0 1em;
+    }
+
+    .wrapper {
+      width: auto;
+      height: 100vh;
+      display: flex;
+    }
+
+    p {
+      flex-shrink: 1;
+      margin: auto;
+      font-size: 10em;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .day {
+      border-bottom: 25px solid yellow;
+    }
+
+    .sunset {
+      border-bottom: 25px solid magenta;
+    }
+    
+    .evening {
+      border-bottom: 25px solid cyan;
+    }
+  
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <p id="clock" class="day">
+      HH : MM : SS
+    </p>
+  </div>
+
+  <script>
+    let sunsetTime;
+    const clock = document.getElementById("clock");
+
+    const checkSunset = (sunset) => {
+      const timeNow = Date.now()
+      // range of 1 minute (60000 ms)
+      if(timeNow >= sunset && timeNow <= sunset + 60000) {
+        clock.classList.add("sunset")
+      } else if(timeNow > sunset + 60000) {
+        clock.classList.add("evening")
+      } else {
+        clock.classList = ["day"]
+      }
+    }
+
+    const makeAjaxPromise = (url) => {
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", url);
+        xhr.send();
+        xhr.onreadystatechange = () => {
+          if(xhr.readyState === 4){
+            if(xhr.status === 200) {
+              resolve(JSON.parse(xhr.responseText));
+            } else {
+              reject(`ready state: ${xhr.readyState}, status: ${xhr.status}`);
+            }
+          }
+        }
+      })
+    }
+    
+    makeAjaxPromise("http://geoip.nekudo.com/api/")
+      .then(response => {
+        const loc = response.location
+        makeAjaxPromise(`https://api.sunrise-sunset.org/json?lat=${loc.latitude}&lng=${loc.longitude}&formatted=0`)
+          .then(data => {
+            sunsetTime = Date.parse(data.results.sunset)
+            checkSunset(sunsetTime)
+          })
+      })
+
+    const updateClock = () => {
+      let amPM;
+
+      const convertHour = num => {
+        if(num == 0) {
+          amPM = "AM";
+          return 12;
+        } else if (num > 0 && num < 12) {
+          amPM = "AM";
+          return num;
+        } else if (num == 12) {
+          amPM = "PM"
+          return num
+        } else if (num > 12) {
+          amPM = "PM"
+          return num - 12
+        }
+      }
+
+      const zFill = num => {
+        return (num < 10) ? `0${num}` : num
+      }
+
+      const timeNow = Date.now();
+      const time = new Date(timeNow);
+
+      const hour = zFill(convertHour(time.getHours()));
+      const minute = zFill(time.getMinutes());
+      const seconds = zFill(time.getSeconds());
+
+      // Sunset is checked on the minute... maybe not great?
+      if(seconds === "00") checkSunset(sunsetTime);
+      clock.innerHTML = `${hour} : ${minute} : ${seconds} ${amPM}`
+    }
+
+    updateClock();
+    window.setInterval(updateClock, 1000);
+  </script>
+
+</body>
+</html>
