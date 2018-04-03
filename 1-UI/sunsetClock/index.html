@@ -87,7 +87,7 @@
         const loc = response.location
         makeAjaxPromise(`https://api.sunrise-sunset.org/json?lat=${loc.latitude}&lng=${loc.longitude}&date=${getTodaysDate()}&formatted=0`)
           .then(data => {
-            sunsetTime = Date.parse(data.results.sunset)
+            sunsetTime = new Date(data.results.sunset).getTime();
             console.log(sunsetTime)
             checkSunset(sunsetTime)
           })
@@ -112,7 +112,7 @@
       }
 
       const zFill = num => {
-        return (num < 10) ? `0${num}` : num
+        return (num < 10) ? `0${num}` : `${num}`
       }
 
       const timeNow = new Date(Date.now());
@@ -120,9 +120,9 @@
       const hour = zFill(convertHour(timeNow.getHours()));
       const minute = zFill(timeNow.getMinutes());
       const seconds = zFill(timeNow.getSeconds());
-
-      // Sunset is checked on the minute... maybe not great?
-      if(seconds === "00") checkSunset(sunsetTime);
+      
+      // Sunset is checked every 10 seconds... performance concern?
+      if(seconds.endsWith("0")) checkSunset(sunsetTime);
       clock.innerHTML = `${hour} : ${minute} : ${seconds} ${amPM}`
     }
     updateClock();
