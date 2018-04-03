@@ -88,10 +88,10 @@
         return makeAjaxPromise(`https://api.sunrise-sunset.org/json?lat=${loc.latitude}&lng=${loc.longitude}&date=${getTodaysDate()}&formatted=0`)
       })
       .then(data => {
-            sunsetTime = new Date(data.results.sunset).getTime();
-            console.log(sunsetTime)
-            checkSunset(sunsetTime)
-          })
+        sunsetTime = new Date(data.results.sunset).getTime();
+        console.log(sunsetTime)
+        checkSunset(sunsetTime)
+      })
 
     const updateClock = () => {
       let amPM;
