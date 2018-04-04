@@ -21,6 +21,11 @@
       font-size: 10em;
       font-family: Arial, Helvetica, sans-serif;
       border-bottom: 25px solid white;
+      display: none;
+    }
+
+    .show_clock {
+      display: inline-block;
     }
 
     .day {
@@ -28,11 +33,11 @@
     }
 
     .sunset {
-      border-bottom: 25px solid magenta;
+      border-bottom: 25px solid lightpink;
     }
     
     .evening {
-      border-bottom: 25px solid cyan;
+      border-bottom: 25px solid green;
     }
   
   </style>
@@ -45,10 +50,17 @@
   </div>
 
   <script>
-    let sunriseTime;
-    let sunsetTime;
-    let twilightEnd;
     const clock = document.getElementById("clock");
+    
+    let SUNSTATE;
+    const saveSunState = (sunrise, sunset, twilightEnd) => {
+      SUNSTATE = {
+        sunrise,
+        sunset,
+        twilightEnd
+      }
+      console.log(`State saved: ${SUNSTATE.sunrise}, ${SUNSTATE.sunset}, ${SUNSTATE.twilightEnd}`)
+    }
 
     const getTodaysDate = () => {
       const timeNow = new Date(Date.now());
@@ -58,45 +70,29 @@
       return `${year}-${month}-${date}`;
     }
 
-    const checkSun = (sunrise, sunset, twilightEnd) => {
+    const checkSunState = () => {
       const timeNow = Date.now();
+      const { sunrise, sunset, twilightEnd } = SUNSTATE;
 
       if(timeNow >= sunrise && timeNow < sunset) {
-        clock.classList = ["day"];
+        // Is this best practice? Can't simply assign because of displayClock()
+        clock.classList.add("day");
+        clock.classList.remove("sunset");
+        clock.classList.remove("evening");
       } else if(timeNow >= sunset && timeNow <= twilightEnd) {
-        clock.classList = ["sunset"];
+        clock.classList.add("sunset");
+        clock.classList.remove("day");
+        clock.classList.remove("evening");
       } else {
-        clock.classList = ["evening"];
+        clock.classList.add("evening");
+        clock.classList.remove("day");
+        clock.classList.remove("sunset");
       }
     }
 
-    const makeAjaxPromise = (url) => {
-      return new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.open("GET", url);
-        xhr.send();
-        xhr.onreadystatechange = () => {
-          if(xhr.readyState === 4){
-            (xhr.status === 200)
-              ? resolve(JSON.parse(xhr.responseText))
-              : reject(`ready state: ${xhr.readyState}, status: ${xhr.status}`);
-          }
-        } // end onreadystatechange
-      }); // end returned Promise
-    }; // end makeAjaxPromise
-    
-    makeAjaxPromise("http://geoip.nekudo.com/api/")
-      .then(response => {
-        const loc = response.location
-        return makeAjaxPromise(`https://api.sunrise-sunset.org/json?lat=${loc.latitude}&lng=${loc.longitude}&date=${getTodaysDate()}&formatted=0`)
-      })
-      .then(data => {
-        sunriseTime = new Date(data.results.sunrise).getTime();
-        sunsetTime = new Date(data.results.sunset).getTime();
-        twilightEnd = new Date(data.results.civil_twilight_end).getTime();
-        console.log(`sunrise: ${sunriseTime}, sunset: ${sunsetTime}, twilight end: ${twilightEnd}`)
-        checkSun(sunriseTime, sunsetTime, twilightEnd)
-      })
+    const displayClock = () => {
+      clock.classList.add("show_clock")
+    }
 
     const updateClock = () => {
       let amPM;
@@ -126,11 +122,49 @@
       const minute = zFill(timeNow.getMinutes());
       const seconds = zFill(timeNow.getSeconds());
       
-      // Sunset is checked every 10 seconds... performance concern?
-      if(seconds.endsWith("0")) checkSun(sunriseTime, sunsetTime, twilightEnd);
+      // sunState is checked every 10 seconds... performance concern?
+      if(seconds.endsWith("0")) checkSunState();
       clock.innerHTML = `${hour} : ${minute} : ${seconds} ${amPM}`
     }
-    updateClock();
+
+    const makeAjaxPromise = (url) => {
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", url);
+        xhr.send();
+        xhr.onreadystatechange = () => {
+          if(xhr.readyState === 4){
+            (xhr.status === 200)
+              ? resolve(JSON.parse(xhr.responseText))
+              : reject(`ready state: ${xhr.readyState}, status: ${xhr.status}`);
+          }
+        } // end onreadystatechange
+      }); // end returned Promise
+    }; // end makeAjaxPromise
+    
+    makeAjaxPromise("http://geoip.nekudo.com/api/")
+      .then(response => {
+        const loc = response.location
+        return makeAjaxPromise(`https://api.sunrise-sunset.org/json?lat=${loc.latitude}&lng=${loc.longitude}&date=${getTodaysDate()}&formatted=0`)
+      })
+      .then(data => {
+        // Process data
+        const sunriseData = new Date(data.results.sunrise);
+        const sunsetData = new Date(data.results.sunset);
+        const twilightEndData = new Date(data.results.civil_twilight_end);
+        
+        return [sunriseData, sunsetData, twilightEndData]
+          .map(data => data.getTime())
+      })
+      .then(([sunriseTime, sunsetTime, twilightEndTime]) => {
+        // Save state & do stuff with clock
+        console.log(`Promise returns sunrise: ${sunriseTime}, sunset: ${sunsetTime}, twilight end: ${twilightEndTime}`)
+        saveSunState(sunriseTime, sunsetTime, twilightEndTime);
+        checkSunState();
+        displayClock()
+        updateClock();
+      })
+
     window.setInterval(updateClock, 1000);
   </script>
 
