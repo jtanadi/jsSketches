@@ -124,8 +124,8 @@
         timeNow.getSeconds()
       ].map(time => zFill(time))
 
-      // sunState is checked every 10 seconds... performance concern?
-      if(seconds.endsWith("0")) checkSunState();
+      // SUNSTATE is checked every 10 seconds only if it's defined
+      if(seconds.endsWith("0") && SUNSTATE) checkSunState();
       clock.innerHTML = `${hour} : ${minute} : ${seconds} ${amPM}`
     }
 
@@ -138,7 +138,7 @@
           if(xhr.readyState === 4){
             (xhr.status === 200)
               ? resolve(JSON.parse(xhr.responseText))
-              : reject(`ready state: ${xhr.readyState}, status: ${xhr.status}`);
+              : reject(new Error(`Can't get stuff from ${url}. readystate: ${xhr.readyState}, status: ${xhr.status}`));
           }
         } // end onreadystatechange
       }); // end returned Promise
@@ -165,8 +165,15 @@
         console.log(`Promise returns sunrise: ${sunriseTime}, sunset: ${sunsetTime}, twilight end: ${twilightEndTime}`)
         saveSunState(sunriseTime, sunsetTime, twilightEndTime);
         checkSunState();
-        displayClock()
         updateClock();
+        displayClock()
+        window.setInterval(updateClock, 1000);
+      })
+      .catch(e => {
+        // Log message, but display & update clock anyway
+        console.error(e.message)
+        updateClock();
+        displayClock()
         window.setInterval(updateClock, 1000);
       })
 
