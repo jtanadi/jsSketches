@@ -71,8 +71,9 @@
     }
 
     const checkSunState = () => {
-      const timeNow = Date.now();
+      // Destructure global state
       const { sunrise, sunset, twilightEnd } = SUNSTATE;
+      const timeNow = Date.now();
 
       if(timeNow >= sunrise && timeNow < sunset) {
         // Is this best practice? Can't simply assign because of displayClock()
@@ -117,11 +118,12 @@
       }
 
       const timeNow = new Date(Date.now());
+      const [hour, minute, seconds] = [
+        convertHour(timeNow.getHours()),
+        timeNow.getMinutes(),
+        timeNow.getSeconds()
+      ].map(time => zFill(time))
 
-      const hour = zFill(convertHour(timeNow.getHours()));
-      const minute = zFill(timeNow.getMinutes());
-      const seconds = zFill(timeNow.getSeconds());
-      
       // sunState is checked every 10 seconds... performance concern?
       if(seconds.endsWith("0")) checkSunState();
       clock.innerHTML = `${hour} : ${minute} : ${seconds} ${amPM}`
@@ -144,6 +146,7 @@
     
     makeAjaxPromise("http://geoip.nekudo.com/api/")
       .then(response => {
+        // Use location to get sun info
         const loc = response.location
         return makeAjaxPromise(`https://api.sunrise-sunset.org/json?lat=${loc.latitude}&lng=${loc.longitude}&date=${getTodaysDate()}&formatted=0`)
       })
