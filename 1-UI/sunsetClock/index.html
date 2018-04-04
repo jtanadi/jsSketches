@@ -20,6 +20,7 @@
       margin: auto;
       font-size: 10em;
       font-family: Arial, Helvetica, sans-serif;
+      border-bottom: 25px solid white;
     }
 
     .day {
@@ -38,7 +39,7 @@
 </head>
 <body>
   <div class="wrapper">
-    <p id="clock" class="day">
+    <p id="clock">
       HH : MM : SS
     </p>
   </div>
@@ -59,9 +60,9 @@
       const timeNow = Date.now();
       // range of 1 minute (60000 ms)
       if(timeNow >= sunset && timeNow <= sunset + 60000) {
-        clock.classList.add("sunset");
+        clock.classList = ["sunset"];
       } else if(timeNow > sunset + 60000) {
-        clock.classList.add("evening");
+        clock.classList = ["evening"];
       } else {
         clock.classList = ["day"];
       }
