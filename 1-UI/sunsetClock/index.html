@@ -45,6 +45,7 @@
   </div>
 
   <script>
+    let sunriseTime;
     let sunsetTime;
     const clock = document.getElementById("clock");
 
@@ -56,12 +57,13 @@
       return `${year}-${month}-${date}`;
     }
 
-    const checkSunset = (sunset) => {
+    const checkSun = (sunrise, sunset) => {
       const timeNow = Date.now();
-      // range of 1 minute (60000 ms)
-      if(timeNow >= sunset && timeNow <= sunset + 60000) {
+      const sunsetOffset = sunset + 60000; // range of 1 minute (60000 ms)
+
+      if(timeNow >= sunset && timeNow <= sunsetOffset) {
         clock.classList = ["sunset"];
-      } else if(timeNow > sunset + 60000) {
+      } else if(timeNow < sunrise || timeNow > sunsetOffset) {
         clock.classList = ["evening"];
       } else {
         clock.classList = ["day"];
@@ -89,9 +91,10 @@
         return makeAjaxPromise(`https://api.sunrise-sunset.org/json?lat=${loc.latitude}&lng=${loc.longitude}&date=${getTodaysDate()}&formatted=0`)
       })
       .then(data => {
+        sunriseTime = new Date(data.results.sunrise).getTime();
         sunsetTime = new Date(data.results.sunset).getTime();
-        console.log(sunsetTime)
-        checkSunset(sunsetTime)
+        console.log(sunriseTime, sunsetTime)
+        checkSun(sunriseTime, sunsetTime)
       })
 
     const updateClock = () => {
@@ -123,7 +126,7 @@
       const seconds = zFill(timeNow.getSeconds());
       
       // Sunset is checked every 10 seconds... performance concern?
-      if(seconds.endsWith("0")) checkSunset(sunsetTime);
+      if(seconds.endsWith("0")) checkSun(sunriseTime, sunsetTime);
       clock.innerHTML = `${hour} : ${minute} : ${seconds} ${amPM}`
     }
     updateClock();
