@@ -47,6 +47,7 @@
   <script>
     let sunriseTime;
     let sunsetTime;
+    let twilightEnd;
     const clock = document.getElementById("clock");
 
     const getTodaysDate = () => {
@@ -57,13 +58,12 @@
       return `${year}-${month}-${date}`;
     }
 
-    const checkSun = (sunrise, sunset) => {
+    const checkSun = (sunrise, sunset, twilightEnd) => {
       const timeNow = Date.now();
-      const sunsetOffset = sunset + 60000; // range of 1 minute (60000 ms)
 
       if(timeNow >= sunrise && timeNow < sunset) {
         clock.classList = ["day"];
-      } else if(timeNow >= sunset && timeNow <= sunsetOffset) {
+      } else if(timeNow >= sunset && timeNow <= twilightEnd) {
         clock.classList = ["sunset"];
       } else {
         clock.classList = ["evening"];
@@ -93,8 +93,9 @@
       .then(data => {
         sunriseTime = new Date(data.results.sunrise).getTime();
         sunsetTime = new Date(data.results.sunset).getTime();
-        console.log(sunriseTime, sunsetTime)
-        checkSun(sunriseTime, sunsetTime)
+        twilightEnd = new Date(data.results.civil_twilight_end).getTime();
+        console.log(`sunrise: ${sunriseTime}, sunset: ${sunsetTime}, twilight end: ${twilightEnd}`)
+        checkSun(sunriseTime, sunsetTime, twilightEnd)
       })
 
     const updateClock = () => {
@@ -126,7 +127,7 @@
       const seconds = zFill(timeNow.getSeconds());
       
       // Sunset is checked every 10 seconds... performance concern?
-      if(seconds.endsWith("0")) checkSun(sunriseTime, sunsetTime);
+      if(seconds.endsWith("0")) checkSun(sunriseTime, sunsetTime, twilightEnd);
       clock.innerHTML = `${hour} : ${minute} : ${seconds} ${amPM}`
     }
     updateClock();
