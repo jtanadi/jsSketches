@@ -149,12 +149,12 @@
       })
       .then(data => {
         // Process data
-        const sunriseData = new Date(data.results.sunrise);
-        const sunsetData = new Date(data.results.sunset);
-        const twilightEndData = new Date(data.results.civil_twilight_end);
+        const res = data.results
+        const sunData = [res.sunrise, res.sunset, res.civil_twilight_end]
         
-        return [sunriseData, sunsetData, twilightEndData]
-          .map(data => data.getTime())
+        return sunData
+          .map(data => new Date(data))
+          .map(date => date.getTime())
       })
       .then(([sunriseTime, sunsetTime, twilightEndTime]) => {
         // Save state & do stuff with clock
