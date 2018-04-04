@@ -61,12 +61,12 @@
       const timeNow = Date.now();
       const sunsetOffset = sunset + 60000; // range of 1 minute (60000 ms)
 
-      if(timeNow >= sunset && timeNow <= sunsetOffset) {
-        clock.classList = ["sunset"];
-      } else if(timeNow < sunrise || timeNow > sunsetOffset) {
-        clock.classList = ["evening"];
-      } else {
+      if(timeNow >= sunrise && timeNow < sunset) {
         clock.classList = ["day"];
+      } else if(timeNow >= sunset && timeNow <= sunsetOffset) {
+        clock.classList = ["sunset"];
+      } else {
+        clock.classList = ["evening"];
       }
     }
 
