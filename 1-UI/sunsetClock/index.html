@@ -144,6 +144,7 @@
       }); // end returned Promise
     }; // end makeAjaxPromise
     
+    // Promise call chain starts here!
     makeAjaxPromise("http://geoip.nekudo.com/api/")
       .then(response => {
         // Use location to get sun info
@@ -166,9 +167,9 @@
         checkSunState();
         displayClock()
         updateClock();
+        window.setInterval(updateClock, 1000);
       })
 
-    window.setInterval(updateClock, 1000);
   </script>
 
 </body>
