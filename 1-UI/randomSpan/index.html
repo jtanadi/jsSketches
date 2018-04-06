@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>SWITCHEROO</title>
+  <title>🍳 SCRAMBLE 🍳</title>
   
   <style>
     @font-face {
@@ -85,75 +85,77 @@
     <option value="Courier">Courier</option>
   </select>
 
-  <button onclick="refresh(font1Input.value, font2Input.value)">Refresh</button>
+  <button id="refresh">Refresh</button>
 
   <p>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing elit</strong>. Ut ut odio convallis, aliquam diam eget, dignissim augue. Aliquam pretium sollicitudin dui tincidunt fringilla. Cras lobortis, mauris nec pretium sagittis, nulla purus vulputate sem, in <em>placerat tellus lorem sit amet</em> nibh. Sed condimentum feugiat leo, at tincidunt ligula viverra id. Maecenas suscipit nisl eu interdum feugiat. <strong><em>Pellentesque aliquam</em> laoreet velit eget mattis.</strong> Etiam vestibulum tempor purus, sagittis iaculis odio. Etiam ac quam placerat ipsum malesuada commodo interdum eget libero. Nunc at urna ut ligula blandit luctus. Maecenas at odio nunc. Aenean vel lacinia turpis, ac rhoncus libero. Fusce eget bibendum nulla, in efficitur ex. Phasellus egestas quam sed tellus dictum, quis aliquet nisi interdum. Maecenas tincidunt sollicitudin efficitur. Curabitur ac justo ante.</p>
 
   <script>
     const paragraph = document.querySelector("p");
+    const dropDowns = document.querySelectorAll("select");
+    const refreshButton = document.getElementById("refresh")
     const font1Input = document.getElementById("font1");
     const font2Input = document.getElementById("font2");
-    const dropDowns = document.querySelectorAll("select");
     
-    let RUNSTATE = false;
-    let HTMLSTATE = paragraph.innerHTML;
+    // Capture this for later
+    const HTMLSTATE = paragraph.innerHTML;
 
+    /* FUNCTIONS! */
     const flatten = arr => arr.reduce((retArr, item) => {
       return retArr.concat(Array.isArray(item) ? flatten(item) : [item]);
     }, []);
 
-    const randomSpan = (letter, font1, font2) => {
-      if(letter === "<strong>" || letter === "</strong>") return letter
+    const parseHTML = (htmlInput) => {
+      const parseTag = (htmlItem, tagType) => {
+        /* (str, str) -> [str, str] 
+        Returns [ <tag>, string ] or [ string, </tag> ]
+        */
+        return htmlItem.includes(`<${tagType}>`)
+          ? [`<${tagType}>`, `${htmlItem.replace(`<${tagType}>`, "")} `]
+          : [`${htmlItem.replace(`</${tagType}>`, "")} `, `</${tagType}>`];
+      };
+      
+      return htmlInput.split(" ")
+        .map(word => {
+          if(word.includes("strong>")){
+            return parseTag(word, "strong")
+          } else if (word.includes("em>")) {
+            return parseTag(word, "em")
+          }
+          return `${word} `
+        });
+    };
+
+    const randomSpan = (htmlItem, font1, font2) => {
+      if(htmlItem.includes("em>") || htmlItem.includes("strong>")) return htmlItem;
 
       if(!Math.round(Math.random())) {
-        return `<span style="font-family: ${font1}">${letter}</span>`;
+        return `<span style="font-family: ${font1}">${htmlItem}</span>`;
       }
-      return `<span style="font-family: ${font2}">${letter}</span>`;
-    }
-
-    const parseBold = (item) => {
-      return item.includes("<strong>")
-        ? ["<strong>", `${item.replace("<strong>", "")} `]
-        : [`${item.replace("</strong>", "")} `, "</strong>"]
-    }
+      return `<span style="font-family: ${font2}">${htmlItem}</span>`;
+    };
     
-    const parseItal = (item) => {
-      return item.includes("<em>")
-        ? ["<em>", `${item.replace("<em>", "")} `]
-        : [`${item.replace("</em>", "")} `, "</em>"]
-    }
-
-    const parseHTML = (htmlInput) => {
-      return htmlInput.split(" ")
-        .map(item => {
-          if(item.includes("strong>")){
-            return parseBold(item)
-          } else if (item.includes("em>")) {
-            return parseItal(item)
-          }
-          return `${item} `
+    const scramble = (parsingCB, inputHTML, font1, font2) => {
+      return flatten(
+        flatten(parsingCB(inputHTML))
+        .map(word => {
+          return word.includes("strong>") || word.includes("em>") 
+            ? word : word.split("")
         })
-    }
-    
-    const refresh = (font1, font2) => {
-      paragraph.innerHTML = flatten(
-        flatten(parseHTML(HTMLSTATE))
-        .map(item => {
-          return item.includes("strong>") || item.includes("em>") 
-            ? item : item.split("")
-        })
-      ).map(letter => randomSpan(letter, font1, font2))
-      .join("")
-    }
+      ).map(letter => randomSpan(letter, font1, font2)).join("");
+    };
 
-    refresh(font1Input.value, font2Input.value);
+    /* START DOING STUFF */
+    paragraph.innerHTML = scramble(parseHTML, HTMLSTATE, font1Input.value, font2Input.value);
 
     dropDowns.forEach(dropDown => {
       dropDown.addEventListener("change", () => {
-        refresh(font1Input.value, font2Input.value)
+        paragraph.innerHTML = scramble(parseHTML, HTMLSTATE, font1Input.value, font2Input.value);
       })
     })
 
+    refreshButton.addEventListener("click", () => {
+      paragraph.innerHTML = scramble(parseHTML, HTMLSTATE, font1Input.value, font2Input.value);
+    })
 
   </script>
 </body>
