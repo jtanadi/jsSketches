@@ -53,17 +53,17 @@
 <body>
   <div class="wrapper">
     <ul>
-      <li class="restaurant">Sophie's</li>
-      <li class="restaurant">TW Porkchop House</li>
-      <li class="restaurant">TW Bear House</li>
+      <li class="item">Item 1</li>
+      <li class="item">Item 2</li>
+      <li class="item">Item 3</li>
     </ul>
 
-    <button id="randomButton">Shoot me now!</button>
+    <button id="randomButton">Pick one!</button>
     <button id="clearButton">Clear!</button>
   </div>
 
   <script>
-    const restaurants = document.getElementsByClassName("restaurant");
+    const items = document.getElementsByClassName("item");
     const randomButton = document.getElementById("randomButton");
     const clearButton = document.getElementById("clearButton");
 
@@ -74,13 +74,13 @@
         return Math.floor(Math.random() * (max - min)) + min;
       };
 
-      const index = getRandomInt(0, restaurants.length);
-      restaurants[index].classList.add("highlight");
+      const index = getRandomInt(0, items.length);
+      items[index].classList.add("highlight");
     };
 
     const clearHighlights = () => {
-      Array.from(restaurants).forEach(restaurant => {
-        restaurant.classList.remove("highlight")
+      Array.from(items).forEach(item => {
+        item.classList.remove("highlight")
       })
     };
 
