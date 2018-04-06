@@ -8,6 +8,29 @@
     @font-face {
       font-family: "Liberation Sans";
       src: url("./_fonts/LiberationSans-Regular-webfont.woff") format("woff");
+      font-weight: normal;
+      font-style: normal;
+    }
+    
+    @font-face {
+      font-family: "Liberation Sans";
+      src: url("./_fonts/LiberationSans-Italic-webfont.woff") format("woff");
+      font-weight: normal;
+      font-style: italic;
+    }
+
+    @font-face {
+      font-family: "Liberation Sans";
+      src: url("./_fonts/LiberationSans-Bold-webfont.woff") format("woff");
+      font-weight: bold;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: "Liberation Sans";
+      src: url("./_fonts/LiberationSans-BoldItalic-webfont.woff") format("woff");
+      font-weight: bold;
+      font-style: italic;
     }
 
     * {
@@ -35,11 +58,13 @@
     p {
       font-family: Arial, Helvetica, sans-serif;
       font-size: 3em;
+      line-height: 1.2em;
     }
 
-    span{
+    strong, span, em {
       margin: 0;
     }
+
   </style>
 
 </head>
@@ -62,25 +87,63 @@
 
   <button onclick="refresh(font1Input.value, font2Input.value)">Refresh</button>
 
-  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ut odio convallis, aliquam diam eget, dignissim augue. Aliquam pretium sollicitudin dui tincidunt fringilla. Cras lobortis, mauris nec pretium sagittis, nulla purus vulputate sem, in placerat tellus lorem sit amet nibh. Sed condimentum feugiat leo, at tincidunt ligula viverra id. Maecenas suscipit nisl eu interdum feugiat. Pellentesque aliquam laoreet velit eget mattis. Etiam vestibulum tempor purus, sagittis iaculis odio. Etiam ac quam placerat ipsum malesuada commodo interdum eget libero. Nunc at urna ut ligula blandit luctus. Maecenas at odio nunc. Aenean vel lacinia turpis, ac rhoncus libero. Fusce eget bibendum nulla, in efficitur ex. Phasellus egestas quam sed tellus dictum, quis aliquet nisi interdum. Maecenas tincidunt sollicitudin efficitur. Curabitur ac justo ante.</p>
+  <p>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing elit</strong>. Ut ut odio convallis, aliquam diam eget, dignissim augue. Aliquam pretium sollicitudin dui tincidunt fringilla. Cras lobortis, mauris nec pretium sagittis, nulla purus vulputate sem, in <em>placerat tellus lorem sit amet</em> nibh. Sed condimentum feugiat leo, at tincidunt ligula viverra id. Maecenas suscipit nisl eu interdum feugiat. <strong><em>Pellentesque aliquam</em> laoreet velit eget mattis.</strong> Etiam vestibulum tempor purus, sagittis iaculis odio. Etiam ac quam placerat ipsum malesuada commodo interdum eget libero. Nunc at urna ut ligula blandit luctus. Maecenas at odio nunc. Aenean vel lacinia turpis, ac rhoncus libero. Fusce eget bibendum nulla, in efficitur ex. Phasellus egestas quam sed tellus dictum, quis aliquet nisi interdum. Maecenas tincidunt sollicitudin efficitur. Curabitur ac justo ante.</p>
 
   <script>
     const paragraph = document.querySelector("p");
     const font1Input = document.getElementById("font1");
     const font2Input = document.getElementById("font2");
     const dropDowns = document.querySelectorAll("select");
+    
+    let RUNSTATE = false;
+    let HTMLSTATE = paragraph.innerHTML;
+
+    const flatten = arr => arr.reduce((retArr, item) => {
+      return retArr.concat(Array.isArray(item) ? flatten(item) : [item]);
+    }, []);
 
     const randomSpan = (letter, font1, font2) => {
+      if(letter === "<strong>" || letter === "</strong>") return letter
+
       if(!Math.round(Math.random())) {
         return `<span style="font-family: ${font1}">${letter}</span>`;
       }
       return `<span style="font-family: ${font2}">${letter}</span>`;
     }
+
+    const parseBold = (item) => {
+      return item.includes("<strong>")
+        ? ["<strong>", `${item.replace("<strong>", "")} `]
+        : [`${item.replace("</strong>", "")} `, "</strong>"]
+    }
+    
+    const parseItal = (item) => {
+      return item.includes("<em>")
+        ? ["<em>", `${item.replace("<em>", "")} `]
+        : [`${item.replace("</em>", "")} `, "</em>"]
+    }
+
+    const parseHTML = (htmlInput) => {
+      return htmlInput.split(" ")
+        .map(item => {
+          if(item.includes("strong>")){
+            return parseBold(item)
+          } else if (item.includes("em>")) {
+            return parseItal(item)
+          }
+          return `${item} `
+        })
+    }
     
     const refresh = (font1, font2) => {
-      paragraph.innerHTML = paragraph.innerText.split("")
-        .map(letter => randomSpan(letter, font1, font2))
-        .join("")
+      paragraph.innerHTML = flatten(
+        flatten(parseHTML(HTMLSTATE))
+        .map(item => {
+          return item.includes("strong>") || item.includes("em>") 
+            ? item : item.split("")
+        })
+      ).map(letter => randomSpan(letter, font1, font2))
+      .join("")
     }
 
     refresh(font1Input.value, font2Input.value);
