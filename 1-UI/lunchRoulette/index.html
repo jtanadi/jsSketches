@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Lunch Roulette</title>
+
+  <style>
+    .wrapper {
+      margin: auto;
+      width: 80%;
+      text-align: center;
+    }
+
+    .highlight {
+      background: yellow;
+    }
+
+    button, ul {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    button {
+      margin: auto;
+      font-size: 5em;
+      background: #ffffff;
+      border: 1px solid black;
+      border-radius: .5em;
+      padding: 0.25em;
+      outline: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: black;
+      color: white;
+    }
+
+    button:not(:last-child) {
+      margin-right: .5em;
+    }
+
+    ul {
+      font-size: 10em;
+      list-style-type: none;
+      padding: 0;
+    }
+
+  </style>
+
+</head>
+<body>
+  <div class="wrapper">
+    <ul>
+      <li class="restaurant">Sophie's</li>
+      <li class="restaurant">TW Porkchop House</li>
+      <li class="restaurant">TW Bear House</li>
+    </ul>
+
+    <button id="randomButton">Shoot me now!</button>
+    <button id="clearButton">Clear!</button>
+  </div>
+
+  <script>
+    const restaurants = document.getElementsByClassName("restaurant");
+    const randomButton = document.getElementById("randomButton");
+    const clearButton = document.getElementById("clearButton");
+
+    const highlightRandom = () => {
+      const getRandomInt = (min, max) => {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min)) + min;
+      };
+
+      const index = getRandomInt(0, restaurants.length);
+      restaurants[index].classList.add("highlight");
+    };
+
+    const clearHighlights = () => {
+      Array.from(restaurants).forEach(restaurant => {
+        restaurant.classList.remove("highlight")
+      })
+    };
+
+    randomButton.addEventListener("click", () => {
+      clearHighlights();
+      highlightRandom();
+    })
+    
+    clearButton.addEventListener("click", () => {
+      clearHighlights();
+    })
+
+  </script>
+</body>
+</html>
