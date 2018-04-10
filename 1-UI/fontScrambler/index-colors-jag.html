@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🍳 SCRAMBLE 🍳</title>
+  
+  <style>
+    @font-face {
+      font-family: "Liberation Sans";
+      src: url("./_fonts/LiberationSans-Regular-webfont.woff") format("woff");
+      font-weight: normal;
+      font-style: normal;
+    }
+    
+    @font-face {
+      font-family: "Liberation Sans";
+      src: url("./_fonts/LiberationSans-Italic-webfont.woff") format("woff");
+      font-weight: normal;
+      font-style: italic;
+    }
+
+    @font-face {
+      font-family: "Liberation Sans";
+      src: url("./_fonts/LiberationSans-Bold-webfont.woff") format("woff");
+      font-weight: bold;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: "Liberation Sans";
+      src: url("./_fonts/LiberationSans-BoldItalic-webfont.woff") format("woff");
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    * {
+      margin: .5em;
+    }
+
+    select, button {
+      font-size: 2em;
+      width: 10em;
+      background-color: white;
+      border: 1px solid black;
+      outline: none;
+    }
+
+    button {
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: black;
+      color: white;
+    }
+
+    p {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 3em;
+      line-height: 1.4em;
+    }
+
+    strong, span, em {
+      margin: 0;
+    }
+
+    span {
+      display: inline-block;
+    }
+
+  </style>
+
+</head>
+<body>
+  <select id="colors">
+    <option value="#000" selected>Black / Black</option>
+    <option value="#fff">Black / White</option>
+    <option value="brown">Black / Brown</option>
+  </select>
+  
+  <select id="edge">
+    <option value="smooth" selected>Smooth</option>
+    <option value="jagged">Jagged</option>
+  </select>
+
+  <button id="refresh">Refresh</button>
+
+  <p>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing elit</strong>. Ut ut odio convallis, aliquam diam eget, dignissim augue. Aliquam pretium sollicitudin dui tincidunt fringilla. Cras lobortis, mauris nec pretium sagittis, nulla purus vulputate sem, in <em>placerat tellus lorem sit amet</em> nibh. Sed condimentum feugiat leo, at tincidunt ligula viverra id. Maecenas suscipit nisl eu interdum feugiat. <strong><em> Pellentesque aliquam</em> laoreet velit eget mattis.</strong> Etiam vestibulum tempor purus, sagittis iaculis odio. Etiam ac quam placerat ipsum malesuada commodo interdum eget libero. Nunc at urna ut ligula blandit luctus. Maecenas at odio nunc. Aenean vel lacinia turpis, ac rhoncus libero. Fusce eget bibendum nulla, in efficitur ex. Phasellus egestas quam sed tellus dictum, quis aliquet nisi interdum. Maecenas tincidunt sollicitudin efficitur. Curabitur ac justo ante.</p>
+
+  <script>
+    const paragraph = document.querySelector("p");
+    const dropDowns = document.querySelectorAll("select");
+    const refreshButton = document.getElementById("refresh")
+    const colorsInput = document.getElementById("colors");
+    const edgeInput = document.getElementById("edge");
+    
+    // Capture this for later
+    const HTMLSTATE = paragraph.innerHTML;
+
+    /* FUNCTIONS! */
+    const flatten = arr => arr.reduce((retArr, item) => {
+      return retArr.concat(Array.isArray(item) ? flatten(item) : [item]);
+    }, []);
+
+    const parseHTML = (htmlInput) => {
+      const parseTag = (htmlItem, tagType) => {
+        /* (str, str) -> [str, str] 
+        Returns [ <tag>, string ] or [ string, </tag> ]
+        */
+        return htmlItem.includes(`<${tagType}>`)
+          ? [`<${tagType}>`, `${htmlItem.replace(`<${tagType}>`, "")} `]
+          : [`${htmlItem.replace(`</${tagType}>`, "")} `, `</${tagType}>`];
+      };
+      
+      return htmlInput.split(" ")
+        .map(word => {
+          if(word.includes("strong>")){
+            return parseTag(word, "strong")
+          } else if (word.includes("em>")) {
+            return parseTag(word, "em")
+          }
+          return `${word} `
+        });
+    };
+
+    const randomSpan = (htmlItem, font1, font2, color, edge) => {
+      const offset = edge === "smooth" ? 0 : 0.25
+
+      if(htmlItem === " " || htmlItem.includes("em>") || htmlItem.includes("strong>")) return htmlItem;
+
+      if(!Math.round(Math.random())) {
+        return `<span style="font-family: ${font1}">${htmlItem}</span>`;
+      }
+      return `<span style="font-family: ${font2}; color: ${color}; transform: translate(0, ${offset}em">${htmlItem}</span>`;
+    };
+    
+    const scramble = (parsingCB, inputHTML, font1, font2, color, edge) => {
+      return flatten(
+        flatten(parsingCB(inputHTML))
+        .map(word => {
+          return word.includes("strong>") || word.includes("em>") 
+            ? word : word.split("")
+        })
+      ).map(letter => randomSpan(letter, font1, font2, color, edge)).join("");
+    };
+
+    const applyScramble = target => {
+      target.innerHTML = scramble(parseHTML, HTMLSTATE, "Arial", "Liberation Sans", colorsInput.value, edgeInput.value);
+    }
+    
+    /* START DOING STUFF */
+    applyScramble(paragraph);
+    
+    dropDowns.forEach(dropDown => {
+      dropDown.addEventListener("change", () => {
+        applyScramble(paragraph);
+      })
+    })
+
+    refreshButton.addEventListener("click", () => {
+      applyScramble(paragraph);
+    })
+
+  </script>
+</body>
+</html>
