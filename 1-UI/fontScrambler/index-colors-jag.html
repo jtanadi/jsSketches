@@ -76,7 +76,7 @@
   <select id="colors">
     <option value="#000" selected>Black / Black</option>
     <option value="#fff">Black / White</option>
-    <option value="brown">Black / Brown</option>
+    <option value="#9e6a31">Black / Brown</option>
   </select>
   
   <select id="edge">
@@ -125,7 +125,7 @@
     };
 
     const randomSpan = (htmlItem, font1, font2, color, edge) => {
-      const offset = edge === "smooth" ? 0 : 0.25
+      const offset = edge === "smooth" ? 0 : 0.2
 
       if(htmlItem === " " || htmlItem.includes("em>") || htmlItem.includes("strong>")) return htmlItem;
 
