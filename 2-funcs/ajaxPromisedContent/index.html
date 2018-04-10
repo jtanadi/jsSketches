@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <div id="container">
+  </div>
+  
+  <script>
+    const container = document.getElementById("container");
+
+    const makeAJAXPromise = url => {
+      return new Promise((resolve, reject) => {
+        xhr = new XMLHttpRequest();
+        xhr.open("GET", url)
+        xhr.send();
+        xhr.onreadystatechange = () => {
+          if(xhr.readyState === 4) {
+            xhr.status === 200
+              ? resolve(xhr.responseText)
+              : reject(new Error(`Can't get stuff from ${url}. readystate: ${xhr.readyState}, status: ${xhr.status}`))
+          }
+        };
+      }); // end Promise
+    }; // end function
+
+    const wrapInParagraphTag = text => {
+      if(text.startsWith("<p>") && text.endsWith("</p>")) {
+        return text
+      }
+      
+      return text.split("\n\n")
+        .map(paragraph => `<p>${paragraph}</p>`)
+        .join("")
+    }
+
+    makeAJAXPromise("./pages/sample-text.txt")
+      .then(text => {
+        container.innerHTML = wrapInParagraphTag(text)
+      })
+      .catch(console.error)
+    
+  </script>
+</body>
+</html>
