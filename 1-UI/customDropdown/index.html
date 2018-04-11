@@ -38,9 +38,9 @@
       pointer-events: none;
     }
 
-    #nav_container .option:not(#selected) {
+    /* #nav_container .option:not(#selected) {
       display: none;
-    }
+    } */
     
     #nav_container .option:not(#selected) span {
       border-bottom: 8px solid white;
@@ -48,6 +48,10 @@
 
     #selected span {
       border-bottom: 8px solid yellow;
+    }
+
+    #nav_container .option.closed {
+      display: none;
     }
     
 
@@ -57,10 +61,10 @@
   <div class="container">
     <div id="nav_container">
       <div class="option" id="selected"><span>Page 1</span></div>
-      <div class="option"><span>Page 2</span></div>
-      <div class="option"><span>Page 3</span></div>
-      <div class="option"><span>Page 4</span></div>
-      <div class="option"><span>Page 5</span></div>
+      <div class="option closed"><span>Page 2</span></div>
+      <div class="option closed"><span>Page 3</span></div>
+      <div class="option closed"><span>Page 4</span></div>
+      <div class="option closed"><span>Page 5</span></div>
     </div>
 
       <!-- <div id="nav_arrow">&darr;</div> -->
@@ -72,30 +76,19 @@
     const navOptions = document.querySelectorAll("#nav_container .option")
     // const navSelected = document.querySelectorAll("#nav_container .option#selected")
     
+    let navOpen = false;
     const toggleDisplay = () => {
-      let open;
+      navOpen = !navOpen
       navOptions.forEach((item, index) => {
-        if(item.style.display === "flex" && item.id !== "selected") {
-          open = false;
-          item.style.display = "none"
-        } else {
-          open = true;
-          item.style.display = "flex"
-        }
-      })
-
-      navOptions.forEach((item, index) => {
-        if(open && index !== 0) {
-          item.style.borderTop = "1px solid red"
+        if(navOpen) {
+          if(index !== 0) item.style.borderTop = "1px solid red"
+          item.classList.remove("closed")
         } else {
           item.style.borderTop = "none"
+          if(item.id !== "selected") item.classList.add("closed")
         }
       })
     }
-
-    navDropdown.addEventListener("click", () => {
-      toggleDisplay()
-    })
 
     navOptions.forEach(option => option.addEventListener("click", (evt) => {
       navOptions.forEach((item, index) => {
@@ -103,6 +96,17 @@
       })
       evt.target.id = "selected"
     }))
+
+    navDropdown.addEventListener("click", toggleDisplay)
+
+    // window.addEventListener("click", (e) => {
+    //   if(e.target !== navOptions) {
+    //     navOptions.forEach((item, index) => {
+    //       if(item.id !== "selected" && !item.classList.contains("closed")) item.classList.add("closed")
+    //     })
+    //   }
+    // })
+
   </script>
 </body>
 </html>
