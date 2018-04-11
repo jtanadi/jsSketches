@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Dropdown</title>
+
+  <style>
+    * {
+      font-size: 1.5rem;
+      font-family: Arial, Helvetica, sans-serif;
+      box-sizing: border-box;
+    }
+    .container {
+      width: 40%;
+      margin: auto;
+      display: flex;
+    }
+
+    #nav_container {
+      min-width: 15rem;
+      background: #fff;
+      border: 1px solid red;
+      margin: auto;
+      color: red;
+    }
+
+    #nav_container .option {
+      display: flex;
+      padding: .5rem;
+      height: 4rem;
+    }
+
+    #nav_container .option span {
+      margin-top: auto;
+      margin-bottom: auto;
+      pointer-events: none;
+    }
+
+    #nav_container .option:not(#selected) {
+      display: none;
+    }
+    
+    #nav_container .option:not(#selected) span {
+      border-bottom: 8px solid white;
+    }
+
+    #selected span {
+      border-bottom: 8px solid yellow;
+    }
+    
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="nav_container">
+      <div class="option" id="selected"><span>Page 1</span></div>
+      <div class="option"><span>Page 2</span></div>
+      <div class="option"><span>Page 3</span></div>
+      <div class="option"><span>Page 4</span></div>
+      <div class="option"><span>Page 5</span></div>
+    </div>
+
+      <!-- <div id="nav_arrow">&darr;</div> -->
+    
+  </div>
+
+  <script>
+    const navDropdown = document.getElementById("nav_container")
+    const navOptions = document.querySelectorAll("#nav_container .option")
+    // const navSelected = document.querySelectorAll("#nav_container .option#selected")
+    
+    const toggleDisplay = () => {
+      let open;
+      navOptions.forEach((item, index) => {
+        if(item.style.display === "flex" && item.id !== "selected") {
+          open = false;
+          item.style.display = "none"
+        } else {
+          open = true;
+          item.style.display = "flex"
+        }
+      })
+
+      navOptions.forEach((item, index) => {
+        if(open && index !== 0) {
+          item.style.borderTop = "1px solid red"
+        } else {
+          item.style.borderTop = "none"
+        }
+      })
+    }
+
+    navDropdown.addEventListener("click", () => {
+      toggleDisplay()
+    })
+
+    navOptions.forEach(option => option.addEventListener("click", (evt) => {
+      navOptions.forEach((item, index) => {
+        item.removeAttribute("id")
+      })
+      evt.target.id = "selected"
+    }))
+  </script>
+</body>
+</html>
