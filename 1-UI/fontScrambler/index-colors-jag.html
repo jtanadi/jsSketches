@@ -40,11 +40,11 @@
     select, option, button {
       font-size: 2em;
       width: 10em;
-      color: red;
       background-color: white;
-      border: 1px solid red;
+      border: 1px solid black;
       outline: none;
-      font-family: "Verdana";
+      font-family: "Verdana", Arial, Helvetica, sans-serif;
+      border-radius: 0;
     }
 
     button {
@@ -126,30 +126,40 @@
         });
     };
 
-    const randomSpan = (htmlItem, font1, font2, color, edge) => {
-      const offset = edge === "smooth" ? 0 : 0.2
-
-      if(htmlItem === " " || htmlItem.includes("em>") || htmlItem.includes("strong>")) return htmlItem;
+    const randomSpan = (htmlItem, font1, font2) => {
+      const tagRegex = /<\/*[a-z]+(\s*[a-z]+=".*")*>/ // catches all tag items
+      if(htmlItem === " " || tagRegex.test(htmlItem)) return htmlItem;
 
       if(!Math.round(Math.random())) {
         return `<span style="font-family: ${font1}">${htmlItem}</span>`;
       }
-      return `<span style="font-family: ${font2}; color: ${color}; transform: translate(0, ${offset}em">${htmlItem}</span>`;
+      return `<span style="font-family: ${font2}">${htmlItem}</span>`;
     };
     
     const scramble = (parsingCB, inputHTML, font1, font2, color, edge) => {
+      const offset = edge === "smooth" ? 0 : 0.25;
+
       return flatten(
         flatten(parsingCB(inputHTML))
         .map(word => {
           return word.includes("strong>") || word.includes("em>") 
             ? word : word.split("")
         })
-      ).map(letter => randomSpan(letter, font1, font2, color, edge)).join("");
+      ).map(letter => randomSpan(letter, font1, font2))
+        .map((item, index) => {
+          return index % 2 === 0  || item === " " 
+            ? item
+            : `<span style="color: ${color}; transform: translate(0, ${offset}em)">${item}</span>`
+        })
+        .join("");
     };
 
     const applyScramble = target => {
-      target.innerHTML = scramble(parseHTML, HTMLSTATE, "Arial", "Liberation Sans", colorsInput.value, edgeInput.value);
+      target.innerHTML = scramble(
+        parseHTML, HTMLSTATE, "Arial", "Liberation Sans", colorsInput.value, edgeInput.value
+      );
     }
+    
     
     /* START DOING STUFF */
     applyScramble(paragraph);
