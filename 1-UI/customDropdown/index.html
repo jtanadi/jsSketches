@@ -72,9 +72,8 @@
   </div>
 
   <script>
-    const navDropdown = document.getElementById("nav_container")
+    const navContainer = document.getElementById("nav_container")
     const navOptions = document.querySelectorAll("#nav_container .option")
-    // const navSelected = document.querySelectorAll("#nav_container .option#selected")
     
     let navOpen = false;
     const toggleDisplay = () => {
@@ -90,22 +89,21 @@
       })
     }
 
-    navOptions.forEach(option => option.addEventListener("click", (evt) => {
+    navOptions.forEach(item => item.addEventListener("click", (evt) => {
       navOptions.forEach((item, index) => {
         item.removeAttribute("id")
       })
       evt.target.id = "selected"
     }))
 
-    navDropdown.addEventListener("click", toggleDisplay)
+    // Event bubbling to navContainer
+    navContainer.addEventListener("click", toggleDisplay)
 
-    // window.addEventListener("click", (e) => {
-    //   if(e.target !== navOptions) {
-    //     navOptions.forEach((item, index) => {
-    //       if(item.id !== "selected" && !item.classList.contains("closed")) item.classList.add("closed")
-    //     })
-    //   }
-    // })
+    window.addEventListener("click", (e) => {
+      if(navOpen && !Array.from(navOptions).includes(e.target)) {
+        toggleDisplay()
+      }
+    })
 
   </script>
 </body>
