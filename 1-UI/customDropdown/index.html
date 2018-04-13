@@ -12,6 +12,7 @@
       font-family: Arial, Helvetica, sans-serif;
       box-sizing: border-box;
     }
+
     .container {
       width: 40%;
       margin: auto;
@@ -37,29 +38,37 @@
       margin-bottom: auto;
       pointer-events: none;
     }
-
-    /* #nav_container .option:not(#selected) {
-      display: none;
-    } */
     
     #nav_container .option:not(#selected) span {
       border-bottom: 8px solid white;
     }
 
-    #selected span {
-      border-bottom: 8px solid yellow;
-    }
-
     #nav_container .option.closed {
       display: none;
     }
+
+    #selected span {
+      border-bottom: 8px solid yellow;
+    }
     
+    #nav_arrow {
+      display: flex;
+      float: right;
+      width: 15%;
+      height: 4rem;
+    }
+
+    #nav_arrow span {
+      margin: auto;
+    }
 
   </style>
 </head>
 <body>
   <div class="container">
     <div id="nav_container">
+      <div id="nav_arrow"><span>&darr;</span></div>
+      
       <div class="option" id="selected"><span>Page 1</span></div>
       <div class="option closed"><span>Page 2</span></div>
       <div class="option closed"><span>Page 3</span></div>
@@ -67,13 +76,13 @@
       <div class="option closed"><span>Page 5</span></div>
     </div>
 
-      <!-- <div id="nav_arrow">&darr;</div> -->
     
   </div>
 
   <script>
     const navContainer = document.getElementById("nav_container")
     const navOptions = document.querySelectorAll("#nav_container .option")
+    const navArrow = document.getElementById("nav_arrow")
     
     let navOpen = false;
     const toggleDisplay = () => {
@@ -89,15 +98,16 @@
       })
     }
 
-    navOptions.forEach(item => item.addEventListener("click", (evt) => {
-      navOptions.forEach((item, index) => {
-        item.removeAttribute("id")
-      })
-      evt.target.id = "selected"
-    }))
+    // navOptions.forEach(item => item.addEventListener("click", (evt) => {
+    //   navOptions.forEach((item, index) => {
+    //     item.removeAttribute("id")
+    //   })
+    //   evt.target.id = "selected"
+    // }))
 
     // Event bubbling to navContainer
     navContainer.addEventListener("click", toggleDisplay)
+    navArrow.addEventListener("click", toggleDisplay)
 
     window.addEventListener("click", (e) => {
       if(navOpen && !Array.from(navOptions).includes(e.target)) {
