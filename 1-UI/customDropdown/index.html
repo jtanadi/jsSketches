@@ -58,8 +58,11 @@
       height: 4rem;
     }
 
-    #nav_arrow span {
+    #nav_arrow svg {
+      width: 60%;
+      height: 45%;
       margin: auto;
+      pointer-events: none;
     }
 
   </style>
@@ -67,7 +70,12 @@
 <body>
   <div class="container">
     <div id="nav_container">
-      <div id="nav_arrow"><span>&darr;</span></div>
+      <div id="nav_arrow">
+        <svg>
+          <line x1="0" y1="25%" x2="50%" y2="75%" stroke="red" stroke-width="1" stroke-linecap="butt"/>
+          <line x1="50%" y1="75%"  x2="100%" y2="25%" stroke="red" stroke-width="1" stroke-linecap="butt"/>
+        </svg>
+      </div>
       
       <div class="option" id="selected"><span>Page 1</span></div>
       <div class="option closed"><span>Page 2</span></div>
@@ -83,7 +91,8 @@
     const navContainer = document.getElementById("nav_container")
     const navOptions = document.querySelectorAll("#nav_container .option")
     const navArrow = document.getElementById("nav_arrow")
-    
+    const navDropDownArrs = Array.from(navOptions).concat(navArrow)
+
     let navOpen = false;
     const toggleDisplay = () => {
       navOpen = !navOpen
@@ -98,21 +107,20 @@
       })
     }
 
-    // navOptions.forEach(item => item.addEventListener("click", (evt) => {
-    //   navOptions.forEach((item, index) => {
-    //     item.removeAttribute("id")
-    //   })
-    //   evt.target.id = "selected"
-    // }))
+    navOptions.forEach(item => item.addEventListener("click", (evt) => {
+      navOptions.forEach((item, index) => {
+        item.removeAttribute("id")
+      })
+      evt.target.id = "selected"
+    }))
 
     // Event bubbling to navContainer
     navContainer.addEventListener("click", toggleDisplay)
-    navArrow.addEventListener("click", toggleDisplay)
 
     window.addEventListener("click", (e) => {
-      if(navOpen && !Array.from(navOptions).includes(e.target)) {
+      if(navOpen && !navDropDownArrs.includes(e.target)) {
         toggleDisplay()
-      }
+      } 
     })
 
   </script>
